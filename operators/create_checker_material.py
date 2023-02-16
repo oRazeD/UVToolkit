@@ -18,7 +18,7 @@ class CheckerMaterial(bpy.types.Operator):
 
     def get_uv_checker_map(self, context):
         prefs = context.preferences
-        addon_prefs = prefs.addons["uv_toolkit"].preferences
+        addon_prefs = prefs.addons[__name__.partition('.')[0]].preferences
         checker_type = addon_prefs.checker_type
 
         if addon_prefs.checker_map == "BUILT-IN":
@@ -147,7 +147,7 @@ class CheckerMaterial(bpy.types.Operator):
         if not context.selected_objects:
             self.report({'WARNING'}, 'No Objects Selected')
             return {'CANCELLED'}
-        addon_prefs = context.preferences.addons["uv_toolkit"].preferences
+        addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
         uv_checker_map = self.get_uv_checker_map(context)
 
         self.set_viewport_shading(context)

@@ -53,7 +53,7 @@ class Pie3dView(Menu):
 
     def draw(self, context):
         prefs = context.preferences
-        addon_prefs = prefs.addons["uv_toolkit"].preferences
+        addon_prefs = prefs.addons[__name__.partition('.')[0]].preferences
         self.pie_item(context,
                       addon_prefs.pie_3dview_left,
                       addon_prefs.pie_3dview_custom_op_left,

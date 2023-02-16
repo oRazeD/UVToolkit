@@ -71,7 +71,7 @@ def get_operator_name(context, custom_op):
 
 
 def get_icons_set(context, pie_menu=False):
-    addon_prefs = context.preferences.addons["uv_toolkit"].preferences
+    addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
     if addon_prefs.icon_style == 'LIGHT' or pie_menu:
         icons_coll = icons_collections["light"]
     else:

@@ -204,7 +204,7 @@ def register():
 
     icons_register()
 
-    addon_prefs = bpy.context.preferences.addons["uv_toolkit"].preferences
+    addon_prefs = bpy.context.preferences.addons[__name__.partition('.')[0]].preferences
     update_addon_category(addon_prefs, bpy.context)
 
 

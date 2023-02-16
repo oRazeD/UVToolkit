@@ -29,6 +29,6 @@ class ExportSettings(Operator, ExportHelper):
         preferences = context.preferences
         with open(self.filepath, 'w', encoding='utf-8') as file:
             for addon_property in self.get_addon_properties():
-                value = getattr(preferences.addons["uv_toolkit"].preferences, addon_property)
+                value = getattr(preferences.addons[__name__.partition('.')[0]].preferences, addon_property)
                 file.write(f"{addon_property}='{value}'" + '\n')
         return {'FINISHED'}

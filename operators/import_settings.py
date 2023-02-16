@@ -23,6 +23,6 @@ class ImportSettings(Operator, ImportHelper):
                 prop = item[:idx]
                 value = item[idx + 2:-2]
 
-                addon_prefs = context.preferences.addons["uv_toolkit"].preferences
+                addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
                 setattr(addon_prefs, prop, value)
         return {'FINISHED'}

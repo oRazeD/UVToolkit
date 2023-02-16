@@ -41,7 +41,7 @@ class PieUvEditor(Menu):
 
     def draw(self, context):
         prefs = context.preferences
-        addon_prefs = prefs.addons["uv_toolkit"].preferences
+        addon_prefs = prefs.addons[__name__.partition('.')[0]].preferences
         self.pie_item(context,
                       addon_prefs.pie_uv_editor_left,
                       addon_prefs.pie_uv_editor_custom_op_left,
