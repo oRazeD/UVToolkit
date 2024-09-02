@@ -36,6 +36,10 @@ class SharpEdgesFromUvIslands(Operator):
             if ob.type != 'MESH':
                 ob.select_set(state=False)
 
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.ops.object.shade_auto_smooth(use_auto_smooth=True,
+                                         angle=3.14159)
+
         view_layer.objects.active = mesh_ob[0]
         bpy.ops.object.mode_set(mode='EDIT')
 
@@ -53,9 +57,6 @@ class SharpEdgesFromUvIslands(Operator):
                     l.edge.smooth = True  # Remove all sharp edges
                     if l[uv].select:
                         initial_selection[ob].add(l.index)
-
-            ob.data.use_auto_smooth = True
-            ob.data.auto_smooth_angle = 3.14159
 
         bpy.ops.uv.reveal()
         bpy.ops.uv.select_all(action='SELECT')

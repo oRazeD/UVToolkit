@@ -5,6 +5,8 @@ import bpy
 import bmesh
 from bpy.props import IntProperty, StringProperty
 
+from ..functions import get_addon_preferences
+
 
 class CheckerMaterial(bpy.types.Operator):
     bl_idname = "uv.toolkit_create_checker_material"
@@ -16,17 +18,14 @@ class CheckerMaterial(bpy.types.Operator):
     height: IntProperty(options={'HIDDEN'})
     checker_image_path: StringProperty(options={'HIDDEN'})
 
-    def get_uv_checker_map(self, context):
-        prefs = context.preferences
-        addon_prefs = prefs.addons[__name__.partition('.')[0]].preferences
+    def get_uv_checker_map(self, _context):
+        addon_prefs = get_addon_preferences()
         checker_type = addon_prefs.checker_type
-
         if addon_prefs.checker_map == "BUILT-IN":
-            if addon_prefs.checker_type == 'UV_GRID' or addon_prefs.checker_type == 'COLOR_GRID':
-                checker_type = addon_prefs.checker_type
+            if checker_type in ('UV_GRID', 'COLOR_GRID'):
                 img_size = f"{self.width}x{self.height}"
-                checker_name = f"uv_checker_map_{str.lower(checker_type)}_{img_size}"
-
+                checker_name = \
+                    f"uv_checker_map_{str.lower(checker_type)}_{img_size}"
                 if not bpy.data.images.get(checker_name):
                     bpy.ops.image.new(
                         name=checker_name,
@@ -45,7 +44,7 @@ class CheckerMaterial(bpy.types.Operator):
                 img.name = checker_name
         return bpy.data.images[checker_name]
 
-    def get_uv_checker_material(self, context, uv_checker_map):
+    def get_uv_checker_material(self, _context, uv_checker_map):
         checker_name = uv_checker_map.name
         material_name = checker_name.replace("uv_checker_map",
                                              "uv_checker_material")
@@ -105,7 +104,7 @@ class CheckerMaterial(bpy.types.Operator):
                 if addon_prefs.assign_image_in_uv_editor == 'DISABLE':
                     area.spaces.active.image = None
 
-    def get_multiple_materials(self, context, bm):
+    def get_multiple_materials(self, _context, bm):
         if bm.faces:
             current_material_index = bm.faces[0].material_index
             for f in bm.faces:
@@ -147,7 +146,7 @@ class CheckerMaterial(bpy.types.Operator):
         if not context.selected_objects:
             self.report({'WARNING'}, 'No Objects Selected')
             return {'CANCELLED'}
-        addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
+        addon_prefs = get_addon_preferences()
         uv_checker_map = self.get_uv_checker_map(context)
 
         self.set_viewport_shading(context)

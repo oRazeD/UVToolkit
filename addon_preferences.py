@@ -15,7 +15,7 @@ from .utils.ui_utils import (
 )
 
 
-def update_addon_category(self, context):
+def update_addon_category(self, _context):
     panels = (
         "UVTOOLKIT_PT_uv_sync",
         "UVTOOLKIT_PT_tools",

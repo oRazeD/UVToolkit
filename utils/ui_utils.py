@@ -1,5 +1,6 @@
 import bpy
 
+from ..functions import get_addon_preferences
 from ..register import icons_collections
 
 # EnumProperty
@@ -71,7 +72,7 @@ def get_operator_name(context, custom_op):
 
 
 def get_icons_set(context, pie_menu=False):
-    addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
+    addon_prefs = get_addon_preferences()
     if addon_prefs.icon_style == 'LIGHT' or pie_menu:
         icons_coll = icons_collections["light"]
     else:

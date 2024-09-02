@@ -1,6 +1,8 @@
 import bmesh
 from bpy.types import Operator
 
+from ..functions import get_addon_preferences
+
 
 class UvSyncMode(Operator):
     bl_idname = "uv.toolkit_sync_mode"
@@ -97,7 +99,7 @@ class UvSyncMode(Operator):
             bmesh.update_edit_mesh(me)
 
     def execute(self, context):
-        addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
+        addon_prefs = get_addon_preferences()
         tool_settings = context.tool_settings
         uv_sync_enable = not tool_settings.use_uv_select_sync
         tool_settings.use_uv_select_sync = uv_sync_enable

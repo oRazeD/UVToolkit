@@ -1,6 +1,7 @@
 from bpy.types import Panel
 import os
 
+from ..functions import get_addon_preferences
 from ..utils.ui_utils import get_icons_set
 
 
@@ -26,8 +27,7 @@ class UVTOOLKIT_PT_uv_sync_settings(Panel):
 
     def draw(self, context):
         layout = self.layout
-        addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
-
+        addon_prefs = get_addon_preferences()
         layout.label(text="Sync Selected Elements")
         layout.prop(addon_prefs, "sync_selection", expand=True)
         layout.label(text="Sync Selection Mode")
@@ -289,7 +289,7 @@ class UVTOOLKIT_PT_checker_map(Panel):
         }
 
         def get_checker_maps_path():
-            addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
+            addon_prefs = get_addon_preferences()
             c_maps_path = addon_prefs.chekcer_maps_path
             if os.path.exists(c_maps_path):
                 for path in os.listdir(path=c_maps_path):
@@ -312,7 +312,7 @@ class UVTOOLKIT_PT_checker_map(Panel):
 
     def draw(self, context):
         scene = context.scene
-        addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
+        addon_prefs = get_addon_preferences()
         icons_coll = get_icons_set(context)
         layout = self.layout
         row = layout.row()
@@ -340,9 +340,8 @@ class UVTOOLKIT_PT_quick_presets(Panel):
     bl_category = "UV Toolkit"
 
     @classmethod
-    def poll(cls, context):
-        addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
-        return addon_prefs.checker_map == "BUILT-IN"
+    def poll(cls, _context):
+        return get_addon_preferences().checker_map == "BUILT-IN"
 
     def draw(self, context):
         pass

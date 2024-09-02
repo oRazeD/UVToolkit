@@ -1,15 +1,3 @@
-bl_info = {
-    "name": "UV Toolkit",
-    "author": "Alexander Belyakov",
-    "version": (2, 1, 1),
-    "blender": (3, 4, 1),
-    "location": "UV Editor > Sidebar (N Panel)",
-    "description": "A collection of UV editing tools for Blender 2.8+",
-    "wiki_url": "https://alexbelyakov.gitlab.io/uv-toolkit-docs",
-    "tracker_url": "https://github.com/oRazeD/UVToolkit",
-    "category": "UV"
-}
-
 import bpy
 
 from .operators.align_uv import AlignUv
@@ -63,6 +51,7 @@ from .operators.center_cursor_and_view_all import CenterCursorFrameAll
 from .addon_preferences import UvToolkitPreferences
 
 from .properties import UvToolkitProperties
+from .functions import get_addon_preferences
 
 from .ui.pie_3dview import Pie3dView
 from .ui.pie_uv_editor import PieUvEditor
@@ -171,7 +160,6 @@ classes = (
     UvToolkitProperties,
 )
 
-
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -185,9 +173,7 @@ def register():
 
     icons_register()
 
-    addon_prefs = bpy.context.preferences.addons[__name__.partition('.')[0]].preferences
-    update_addon_category(addon_prefs, bpy.context)
-
+    update_addon_category(get_addon_preferences(), bpy.context)
 
 def unregister():
     for cls in classes:
@@ -204,9 +190,9 @@ def unregister():
 
     icons_unregister()
 
-
 if __name__ == "__main__":
     register()
+
 
 # ##### BEGIN GPL LICENSE BLOCK #####
 #

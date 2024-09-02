@@ -2,6 +2,8 @@ from bpy.types import Operator
 from bpy.props import StringProperty
 from bpy_extras.io_utils import ImportHelper
 
+from ..functions import get_addon_preferences
+
 
 class ImportSettings(Operator, ImportHelper):
     bl_idname = "uv.toolkit_import_settings"
@@ -23,6 +25,6 @@ class ImportSettings(Operator, ImportHelper):
                 prop = item[:idx]
                 value = item[idx + 2:-2]
 
-                addon_prefs = context.preferences.addons[__name__.partition('.')[0]].preferences
+                addon_prefs = get_addon_preferences()
                 setattr(addon_prefs, prop, value)
         return {'FINISHED'}

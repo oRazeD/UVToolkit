@@ -1,5 +1,6 @@
 from bpy.types import Menu
 
+from ..functions import get_addon_preferences
 from ..utils.ui_utils import get_operator_name, get_icons_set
 
 
@@ -40,8 +41,7 @@ class PieUvEditor(Menu):
             pie.operator(pie_property, icon_value=icons_coll[icon_name].icon_id)
 
     def draw(self, context):
-        prefs = context.preferences
-        addon_prefs = prefs.addons[__name__.partition('.')[0]].preferences
+        addon_prefs = get_addon_preferences()
         self.pie_item(context,
                       addon_prefs.pie_uv_editor_left,
                       addon_prefs.pie_uv_editor_custom_op_left,

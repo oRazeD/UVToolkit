@@ -1,0 +1,23 @@
+schema_version = "1.0.0"
+
+id = "uv_toolkit"
+version = "2.1.2"
+name = "UVToolkit"
+tagline = "A trim & tileable baker for Blender"
+maintainer = "Ethan Simon-Law <ethan.simon.3d@gmail.com>"
+type = "add-on"
+
+website = "https://github.com/oRazeD/UVToolkit"
+
+tags = ["UV", "Material"]
+
+blender_version_min = "4.2.0"
+blender_version_max = "4.7.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+
+# [permissions]
+files = "Read/Write Images"
+

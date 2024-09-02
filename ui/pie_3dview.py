@@ -1,5 +1,6 @@
 from bpy.types import Menu
 
+from ..functions import get_addon_preferences
 from ..utils.ui_utils import get_operator_name, get_icons_set
 
 
@@ -52,8 +53,7 @@ class Pie3dView(Menu):
         box.operator("uv.reset")
 
     def draw(self, context):
-        prefs = context.preferences
-        addon_prefs = prefs.addons[__name__.partition('.')[0]].preferences
+        addon_prefs = get_addon_preferences()
         self.pie_item(context,
                       addon_prefs.pie_3dview_left,
                       addon_prefs.pie_3dview_custom_op_left,
