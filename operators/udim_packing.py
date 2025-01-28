@@ -21,6 +21,12 @@ class UdimPacking(Operator):
         name="Margin",
         min=0,
     )
+    pin: BoolProperty(
+        name="Pin",
+        description="Lock Pinned Islands, Constrain islands containing any pinned UV's",
+        default=False,
+    )
+
     @classmethod
     def poll(cls, context):
         return context.mode == 'EDIT_MESH'
@@ -30,6 +36,6 @@ class UdimPacking(Operator):
         cursor_position = tuple(space_data.cursor_location)
         udim_co = get_udim_co(cursor_position)
         u, v = udim_co[1][0] - 1, udim_co[1][1] - 1
-        bpy.ops.uv.pack_islands(rotate=self.rotate, margin=self.margin)
+        bpy.ops.uv.pack_islands(rotate=self.rotate, margin=self.margin, pin=self.pin)
         bpy.ops.transform.translate(value=(u, v, 0))
         return {'FINISHED'}

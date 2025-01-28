@@ -23,9 +23,9 @@ class StraightenIsland(Operator):
             ("CONFORMAL", "Conformal", ""),
         ]
     )
-    ignore_pins: BoolProperty(
-        name="Ignore Pins",
-        default=True,
+    pin: BoolProperty(
+        name="Pin",
+        default=False,
     )
     fill_holes: BoolProperty(
         name="Fill Holes",
@@ -75,7 +75,7 @@ class StraightenIsland(Operator):
                     if l[uv].select is False:
                         l[uv].pin_uv = False
 
-        if self.ignore_pins is False:
+        if self.pin:
             for loop_uv in initial_pins:
                 loop_uv.pin_uv = True
 
