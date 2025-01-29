@@ -1,5 +1,5 @@
 from bpy.types import Operator
-from bpy.props import EnumProperty
+from bpy.props import EnumProperty, BoolProperty
 
 
 class SetActiveUvLayer(Operator):
@@ -15,6 +15,14 @@ class SetActiveUvLayer(Operator):
             ("NAME", "Name", "")
         ],
     )
+    render: BoolProperty(
+        name="Active Render",
+        default=False,
+    )
+    cloning: BoolProperty(
+        name="Active Cloning",
+        default=True,
+    )
 
     def execute(self, context):
         scene = context.scene
@@ -22,19 +30,30 @@ class SetActiveUvLayer(Operator):
         scene_layer_index = scene.uv_toolkit.uv_layer_index
 
         for ob in context.selected_objects:
-            if ob.type == "MESH":
-                if self.mode == "INDEX":
-                    if len(ob.data.uv_layers) < scene_layer_index:
-                        continue
-                    ob.data.uv_layers.active_index = scene_layer_index - 1
-                if self.mode == "NAME":
-                    for uv_layer in ob.data.uv_layers:
-                        if uv_layer.name == scene.uv_toolkit.uv_layer_name:
-                            uv_layer.active = True
-                            break
+            if ob.type != "MESH":
+                continue
+            if self.mode == "INDEX":
+                if len(ob.data.uv_layers) < scene_layer_index:
+                    continue
+                ob.data.uv_layers.active_index = scene_layer_index - 1
+                if self.render:
+                    ob.data.uv_layers.active.active_render = True
+                if self.cloning:
+                    ob.data.uv_layers.active.active_clone = True
+            elif self.mode == "NAME":
+                for uv_layer in ob.data.uv_layers:
+                    if uv_layer.name == scene.uv_toolkit.uv_layer_name:
+                        uv_layer.active = True
+                        if self.render:
+                            uv_layer.active_render = True
+                        if self.cloning:
+                            uv_layer.active_clone = True
+                        break
         return {'FINISHED'}
 
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         layout.prop(self, "mode", expand=True)
+        layout.prop(self, "render")
+        layout.prop(self, "cloning")
