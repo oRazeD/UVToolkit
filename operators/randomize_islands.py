@@ -105,14 +105,14 @@ class RandomizeIslands(Operator):
                 bbox = get_bbox(uv, island)
                 bbox_center = calc_bbox_center(bbox)
 
-                distance_u, distance_v = 0, 0
-                if self.tranlate_u or self.tranlate_v:
-                    distance = random.uniform(
-                        self.tranlate_limit * -1, self.tranlate_limit)
-                    if self.tranlate_u:
-                        distance_u = distance
-                    if self.tranlate_v:
-                        distance_v = distance
+                if self.tranlate_u:
+                    distance_u = random.uniform(self.tranlate_limit * -1, self.tranlate_limit)
+                else:
+                    distance_u = 0
+                if self.tranlate_v:
+                    distance_v = random.uniform(self.tranlate_limit * -1, self.tranlate_limit)
+                else:
+                    distance_v = 0
                 tranlate = translate_matrix(distance_u, distance_v)
 
                 angle = 0
