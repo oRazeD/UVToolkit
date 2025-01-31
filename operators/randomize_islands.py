@@ -6,7 +6,8 @@ import bmesh
 from bpy.types import Operator
 from bpy.props import (
     BoolProperty,
-    FloatProperty
+    FloatProperty,
+    IntProperty
 )
 
 from ..utils.uv_utils import (
@@ -26,7 +27,11 @@ class RandomizeIslands(Operator):
     bl_description = "Randomize uv islands position, scale, or rotation"
     bl_options = {'REGISTER', 'UNDO'}
 
-    tranlate_limit: FloatProperty(
+    seed: IntProperty(
+        name="Random Seed",
+        default=0
+    )
+    translate_limit: FloatProperty(
         name="Distance limit",
         default=0,
         step=0.1,
@@ -34,11 +39,11 @@ class RandomizeIslands(Operator):
         min=0,
         max=30
     )
-    tranlate_u: BoolProperty(
+    translate_u: BoolProperty(
         name="X",
         default=True
     )
-    tranlate_v: BoolProperty(
+    translate_v: BoolProperty(
         name="Y",
         default=True
     )
@@ -94,7 +99,13 @@ class RandomizeIslands(Operator):
             self.report({'INFO'}, "Need to disable UV Sync")
             return {'CANCELLED'}
 
+        random.seed(self.seed)
+
         objects_seams = get_objects_seams(context)
+        translate_limit = self.translate_limit
+        angle_limit = self.angle_limit
+        scale_limit = self.scale_limit
+
         for ob in context.objects_in_mode_unique_data:
             seams = objects_seams[ob]
             me = ob.data
@@ -105,41 +116,27 @@ class RandomizeIslands(Operator):
                 bbox = get_bbox(uv, island)
                 bbox_center = calc_bbox_center(bbox)
 
-                distance_u, distance_v = 0, 0
-                if self.tranlate_u or self.tranlate_v:
-                    distance = random.uniform(
-                        self.tranlate_limit * -1, self.tranlate_limit)
-                    if self.tranlate_u:
-                        distance_u = distance
-                    if self.tranlate_v:
-                        distance_v = distance
-                tranlate = translate_matrix(distance_u, distance_v)
+                distance_u = random.uniform(-translate_limit, translate_limit) if self.translate_u else 0
+                distance_v = random.uniform(-translate_limit, translate_limit) if self.translate_v else 0
+                translate = translate_matrix(distance_u, distance_v)
 
-                angle = 0
                 if self.cw and self.ccw:
-                    angle = random.uniform(
-                        self.angle_limit * -1, self.angle_limit)
-                if self.cw and not self.ccw:
-                    angle = random.uniform(self.angle_limit * -1, 0)
-                if self.ccw and not self.cw:
-                    angle = random.uniform(0, self.angle_limit)
+                    angle = random.uniform(-angle_limit, angle_limit)
+                elif self.cw:
+                    angle = random.uniform(-angle_limit, 0)
+                elif self.ccw:
+                    angle = random.uniform(0, angle_limit)
+                else:
+                    angle = 0
                 rotate = universal_rotation_matrix(context, radians(angle), bbox_center)
 
-                scale_u, scale_v = 1, 1
-                if self.scale_uniform or self.scale_u or self.scale_v:
-                    scale_factor = 1 + random.uniform(
-                        self.scale_limit * -1, self.scale_limit)
-                    if self.scale_uniform:
-                        scale_u = scale_factor
-                        scale_v = scale_factor
-                    if self.scale_u:
-                        scale_u = scale_factor
-                    if self.scale_v:
-                        scale_v = scale_factor
+                scale_factor = 1 + random.uniform(-scale_limit, scale_limit) if (self.scale_uniform or self.scale_u or self.scale_v) else 1
+                scale_u = scale_factor if self.scale_uniform or self.scale_u else 1
+                scale_v = scale_factor if self.scale_uniform or self.scale_v else 1
                 scale = scale_matrix((scale_u, scale_v), bbox_center)
 
                 rotate_scale = np.dot(rotate, scale)
-                convolution = np.dot(tranlate, rotate_scale)
+                convolution = np.dot(translate, rotate_scale)
 
                 for f in island:
                     for l in f.loops:
@@ -151,10 +148,11 @@ class RandomizeIslands(Operator):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        layout.prop(self, "seed")
         layout.label(text="Translate")
-        layout.prop(self, "tranlate_limit")
-        layout.prop(self, "tranlate_u")
-        layout.prop(self, "tranlate_v")
+        layout.prop(self, "translate_limit")
+        layout.prop(self, "translate_u")
+        layout.prop(self, "translate_v")
         layout.label(text="Rotate")
         layout.prop(self, "angle_limit")
         layout.prop(self, "cw")
