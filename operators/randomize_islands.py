@@ -6,7 +6,8 @@ import bmesh
 from bpy.types import Operator
 from bpy.props import (
     BoolProperty,
-    FloatProperty
+    FloatProperty,
+    IntProperty
 )
 
 from ..utils.uv_utils import (
@@ -26,7 +27,11 @@ class RandomizeIslands(Operator):
     bl_description = "Randomize uv islands position, scale, or rotation"
     bl_options = {'REGISTER', 'UNDO'}
 
-    tranlate_limit: FloatProperty(
+    seed: IntProperty(
+        name="Random Seed",
+        default=0
+    )
+    translate_limit: FloatProperty(
         name="Distance limit",
         default=0,
         step=0.1,
@@ -34,11 +39,11 @@ class RandomizeIslands(Operator):
         min=0,
         max=30
     )
-    tranlate_u: BoolProperty(
+    translate_u: BoolProperty(
         name="X",
         default=True
     )
-    tranlate_v: BoolProperty(
+    translate_v: BoolProperty(
         name="Y",
         default=True
     )
@@ -94,6 +99,8 @@ class RandomizeIslands(Operator):
             self.report({'INFO'}, "Need to disable UV Sync")
             return {'CANCELLED'}
 
+        random.seed(self.seed)
+
         objects_seams = get_objects_seams(context)
         for ob in context.objects_in_mode_unique_data:
             seams = objects_seams[ob]
@@ -105,15 +112,15 @@ class RandomizeIslands(Operator):
                 bbox = get_bbox(uv, island)
                 bbox_center = calc_bbox_center(bbox)
 
-                if self.tranlate_u:
-                    distance_u = random.uniform(self.tranlate_limit * -1, self.tranlate_limit)
+                if self.translate_u:
+                    distance_u = random.uniform(self.translate_limit * -1, self.translate_limit)
                 else:
                     distance_u = 0
-                if self.tranlate_v:
-                    distance_v = random.uniform(self.tranlate_limit * -1, self.tranlate_limit)
+                if self.translate_v:
+                    distance_v = random.uniform(self.translate_limit * -1, self.translate_limit)
                 else:
                     distance_v = 0
-                tranlate = translate_matrix(distance_u, distance_v)
+                translate = translate_matrix(distance_u, distance_v)
 
                 angle = 0
                 if self.cw and self.ccw:
@@ -139,7 +146,7 @@ class RandomizeIslands(Operator):
                 scale = scale_matrix((scale_u, scale_v), bbox_center)
 
                 rotate_scale = np.dot(rotate, scale)
-                convolution = np.dot(tranlate, rotate_scale)
+                convolution = np.dot(translate, rotate_scale)
 
                 for f in island:
                     for l in f.loops:
@@ -151,10 +158,11 @@ class RandomizeIslands(Operator):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        layout.prop(self, "seed")
         layout.label(text="Translate")
-        layout.prop(self, "tranlate_limit")
-        layout.prop(self, "tranlate_u")
-        layout.prop(self, "tranlate_v")
+        layout.prop(self, "translate_limit")
+        layout.prop(self, "translate_u")
+        layout.prop(self, "translate_v")
         layout.label(text="Rotate")
         layout.prop(self, "angle_limit")
         layout.prop(self, "cw")
