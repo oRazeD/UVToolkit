@@ -34,7 +34,7 @@ class SharpEdgesFromUvIslands(Operator):
 
         for ob in selected_ob:
             if ob.type != 'MESH':
-                ob.select_set(state=False)
+                ob.select_set(False)
 
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.shade_auto_smooth(use_auto_smooth=True,
@@ -64,7 +64,7 @@ class SharpEdgesFromUvIslands(Operator):
             bpy.ops.uv.seams_from_islands(mark_seams=False, mark_sharp=True)
 
         for ob in selected_ob:
-            ob.select_set(state=True)
+            ob.select_set(True)
         view_layer.objects.active = act_ob
 
         for ob in context.objects_in_mode_unique_data:

@@ -93,11 +93,11 @@ class UnwrapSelected(Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
 
         for ob in selected_ob:
-            ob.select_set(state=False)
+            ob.select_set(False)
 
         for ob in selected_ob:
             view_layer.objects.active = ob
-            ob.select_set(state=True)
+            ob.select_set(True)
 
             bpy.ops.object.mode_set(mode='EDIT')
 
@@ -108,10 +108,10 @@ class UnwrapSelected(Operator):
             self.unwrap_selected_uv_verts(bm, uv)
 
             bpy.ops.object.mode_set(mode='OBJECT')
-            ob.select_set(state=False)
+            ob.select_set(False)
 
         for ob in selected_ob:
-            ob.select_set(state=True)
+            ob.select_set(True)
 
         bpy.ops.object.mode_set(mode='EDIT')
         view_layer.objects.active = act_ob

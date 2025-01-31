@@ -8,19 +8,26 @@ class RemoveAllCheckerMaterials(bpy.types.Operator):
     bl_description = "Completely remove all checker materials and textures"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def remove_checker_material_slot(ob):
+    def remove_checker_material_slot(self, ob):
         for index, slot in enumerate(ob.material_slots):
-            if slot.material:
-                if slot.material.name.startswith("uv_checker_material"):
-                    break
-        ob.active_material_index = index
+            if slot.material \
+            and slot.material.name.startswith("uv_checker_material"):
+                ob.active_material_index = index
+                break
         bpy.ops.object.material_slot_remove()
 
     def execute(self, context):
         mesh_objects = [ob for ob in bpy.data.objects if ob.type == 'MESH']
-        objects_has_init_material = [ob for ob in mesh_objects if "uv_toolkit_init_material" in ob]
-        objects_has_checker_material = [ob for ob in mesh_objects if "uv_toolkit_checker_material" in ob]
-        objects_has_multiple_materials = [ob for ob in mesh_objects if "uv_toolkit_multiple_materials" in ob]
+        objects_has_init_material = \
+            [ob for ob in mesh_objects if "uv_toolkit_init_material" in ob]
+        objects_has_checker_material = \
+            [ob for ob in mesh_objects if "uv_toolkit_checker_material" in ob]
+        objects_has_multiple_materials = []
+        for ob in mesh_objects:
+            if not "uv_toolkit_multiple_materials" in ob \
+            or not bpy.ops.object.mode_set.poll():
+                continue
+            objects_has_multiple_materials.append(ob)
 
         for ob in objects_has_init_material:
             init_material_name = ob["uv_toolkit_init_material"]
@@ -35,7 +42,6 @@ class RemoveAllCheckerMaterials(bpy.types.Operator):
             del(ob["uv_toolkit_checker_material"])
 
         if objects_has_multiple_materials:
-
             view_layer = context.view_layer
             initial_active_ob = view_layer.objects.active
             if initial_active_ob is None:
@@ -47,20 +53,14 @@ class RemoveAllCheckerMaterials(bpy.types.Operator):
             for ob in context.selected_objects:
                 if ob.type == 'MESH':
                     initial_selection.append(ob)
-                    ob.select_set(state=False)
+                    ob.select_set(False)
             for ob in objects_has_multiple_materials:
-                ob.select_set(state=True)
-            view_layer.objects.active = objects_has_multiple_materials[0]
+                ob.select_set(True)
 
             # Remove checker material slot
             for ob in objects_has_multiple_materials:
                 view_layer.objects.active = ob
-                for index, slot in enumerate(ob.material_slots):
-                    if slot.material:
-                        if slot.material.name.startswith("uv_checker_material"):
-                            break
-                ob.active_material_index = index
-                bpy.ops.object.material_slot_remove()
+                self.remove_checker_material_slot(ob)
 
             bpy.ops.object.mode_set(mode='EDIT')
             # Restore initial material indices
@@ -77,9 +77,9 @@ class RemoveAllCheckerMaterials(bpy.types.Operator):
             # Restore initial selected objects
             bpy.ops.object.mode_set(mode='OBJECT')
             for ob in objects_has_multiple_materials:
-                ob.select_set(state=False)
+                ob.select_set(False)
             for ob in initial_selection:
-                ob.select_set(state=True)
+                ob.select_set(True)
             view_layer.objects.active = initial_active_ob
             bpy.ops.object.mode_set(mode=initial_mode)
 
