@@ -1,5 +1,6 @@
 import bpy
 
+from .operators.find_shattered_uvs import FindShatteredUVs
 from .operators.align_uv import AlignUv
 from .operators.border_seam import BorderSeam
 from .operators.toggle_grid_type import ToggleGridType
@@ -89,6 +90,7 @@ from .addon_preferences import update_addon_category
 
 
 classes = (
+    FindShatteredUVs,
     AlignUv,
     BorderSeam,
     ToggleGridType,

@@ -253,6 +253,7 @@ class UVTOOLKIT_PT_select(Panel):
         row.operator("uv.toolkit_select_flipped_islands", text="Flipped Islands",
                      icon_value=icons_coll["select_flipped_islands"].icon_id)
         layout.operator("uv.toolkit_find_udim_crossing", icon_value=icons_coll["find_udim_crossing"].icon_id)
+        layout.operator("uv.toolkit_find_shattered_uvs", icon_value=icons_coll["find_shattered_uvs"].icon_id)
 
 
 class UVTOOLKIT_PT_display(Panel):
