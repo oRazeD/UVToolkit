@@ -55,7 +55,7 @@ class UdimPacking(Operator):
         name="Margin",
         precision=3,
         default=0.001,
-        step=0.003,
+        step=0.3,
         min=0,
     )
     pin: BoolProperty(
