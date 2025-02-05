@@ -5,16 +5,17 @@ from bpy.props import IntProperty, BoolProperty
 from bpy.types import Operator
 
 
-class FindShatteredUVs(Operator):
-    bl_idname = "uv.toolkit_find_shattered_uvs"
-    bl_label = "Find Shattered UVs"
-    bl_description = "Find UV islands that contain an unusually small number of faces\n(and optionally pin them in the top-left corner)"
+class FindShatteredIslands(Operator):
+    bl_idname = "uv.toolkit_find_shattered_islands"
+    bl_label = "Find Shattered Islands"
+    bl_description = "Find islands that contain an unusually small number of faces\n(and optionally pin them in the top-left corner)"
     bl_options = {'REGISTER', 'UNDO'}
 
-    min_acceptance: IntProperty(
-        name="Minimum Acceptance",
-        description="The lowest number of faces an island must contain to be considered intact",
-        default=4,
+    shattered_threshold: IntProperty(
+        name="Threshold",
+        description="The maximum number of faces for islands to be shattered",
+        min=1,
+        default=3
     )
 
     @classmethod
@@ -39,7 +40,7 @@ class FindShatteredUVs(Operator):
 
             uv_layer = bm.loops.layers.uv.verify()
             islands = bmesh_utils.bmesh_linked_uv_islands(bm, uv_layer)
-            shattered_islands = [i for i in islands if len(i) < self.min_acceptance]
+            shattered_islands = [i for i in islands if len(i) <= self.shattered_threshold]
 
             if len(shattered_islands) < 1:
                 continue
