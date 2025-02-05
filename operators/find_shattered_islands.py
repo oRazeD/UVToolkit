@@ -17,16 +17,16 @@ class FindShatteredIslands(Operator):
         min=1,
         default=3
     )
+    
+    pin: BoolProperty(
+        name="Pin to Corner",
+        description="Move and pin islands to the top-left corner within UV space\n(handy for testing your workflow under ideal conditions)",
+        default=False,
+    )
 
     @classmethod
     def poll(cls, context):
         return context.mode == 'EDIT_MESH'
-    
-    pin: BoolProperty(
-        name="Pin",
-        description="Move and pin islands to the top-left corner within the UV space\n(handy for testing your workflow under ideal conditions)",
-        default=False,
-    )
 
     def execute(self, context):
         scene = context.scene
