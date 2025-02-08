@@ -24,6 +24,14 @@ class SetActiveUvLayer(Operator):
         default=True,
     )
 
+    def invoke(self, context, event):
+        scene = context.scene
+        if scene.uv_toolkit.uv_layer_name != "":
+            self.mode = "NAME"
+        else:
+            self.mode = "INDEX"
+        return self.execute(context)
+
     def execute(self, context):
         scene = context.scene
         ob = context.active_object
