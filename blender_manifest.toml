@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "uv_toolkit"
-version = "2.2.0"
+version = "2.1.3"
 name = "UVToolkit"
 tagline = "A collection of UV editing tools for Blender"
 maintainer = "Ethan Simon-Law <ethan.simon.3d@gmail.com>"
