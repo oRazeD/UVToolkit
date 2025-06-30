@@ -12,7 +12,7 @@ website = "https://github.com/oRazeD/UVToolkit"
 tags = ["UV", "Material"]
 
 blender_version_min = "4.2.0"
-blender_version_max = "4.7.0"
+blender_version_max = "6.0.0"
 
 license = [
   "SPDX:GPL-3.0-or-later",
